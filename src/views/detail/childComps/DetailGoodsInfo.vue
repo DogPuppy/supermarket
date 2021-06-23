@@ -23,22 +23,22 @@
           return {}
         }
       },
-      data() {
-        return {
-          counter: 0,
-          imagesLength: 0
-        }
+    },
+    data() {
+      return {
+        counter: 0,
+        imagesLength: 0
       }
     },
     methods: {
       imgLoad() {
         if (++this.counter === this.imagesLength) {
-          this.emit("imageLoad")
+          this.$emit("imageLoad")
         }
       }
     },
     watch: {
-      detailInfo() {
+      detailInfo: function () {
         this.imagesLength = this.detailInfo.detailImage[0].list.length
       }
     }

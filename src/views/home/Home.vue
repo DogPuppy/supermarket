@@ -25,11 +25,12 @@
   import HomeFeatureView from "./childComps/HomeFeatureView"
   import GoodsList from "components/content/goods/GoodsList"
   import Scroll from "components/common/scroll/Scroll"
-  import BackTop from "components/content/backTop/BackTop"
+
 
   import { getHomeMultidata, getHomeGoods } from "network/home"
   import { debounce } from "common/utils"
-
+  import {itemListenerMixin,backTopMixin} from "common/mixin"
+  import {BACK_POSITION} from "common/const"
 
   export default {
     name: 'Home',
@@ -43,9 +44,9 @@
           "sell": { page: 0, list: [] },
         },
         currentType: "pop",
-        isShowBackTop: false,
         tabOffsetTop: 0,
         isTabFixed: false
+
       }
     },
     components: {
@@ -55,8 +56,7 @@
       HomeRecommendView,
       HomeFeatureView,
       GoodsList,
-      Scroll,
-      BackTop
+      Scroll
 
     },
     methods: {
@@ -85,11 +85,8 @@
         this.$refs.tabControl1.currentIndex=index
         this.$refs.tabControl2.currentIndex=index
       },
-      backTop() {
-        this.$refs.scroll.scrollTo(0, 0)
-      },
       contentScroll(position) {
-        this.isShowBackTop = (-position.y) > 1000
+        this.isShowBackTop = (-position.y) > BACK_POSITION
         this.isTabFixed = (-position.y) > this.tabOffsetTop
       },
       loadMore() {
@@ -106,15 +103,9 @@
       this.getHomeGoods("sell")
 
     },
-    mounted() {
-
-
-      const refresh = debounce(this.$refs.scroll.refresh, 500)
-
-      this.$bus.$on("itemImageLoad", () => {
-        refresh()
-      })
-
+    mixins:[itemListenerMixin,backTopMixin],
+    deactivated(){
+      this.$bus.$off("itemImageLoad",this.itemImgListener)
     }
   }
 </script>
