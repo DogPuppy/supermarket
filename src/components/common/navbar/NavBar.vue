@@ -29,7 +29,6 @@
     line-height: 44px;
     text-align: center;
     box-shadow: 0 1px 1px rgb(236, 236, 236);
-    color: white;
     
   }
   .left,.right{
