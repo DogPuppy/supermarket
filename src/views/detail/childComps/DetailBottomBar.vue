@@ -40,7 +40,7 @@
 <style scoped>
   .bottom-bar {
     height: 49px;
-    position: relative;
+    position: absolute;
     background-color: #fff;
     width: 100vw;
     bottom: 0;

@@ -16,7 +16,7 @@
 
 <style scoped>
   #tab-bar {
-    width:100%;
+    width:100vw;
     display:flex;
     height: 49px;
     position:fixed;

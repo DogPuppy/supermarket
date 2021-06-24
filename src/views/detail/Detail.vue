@@ -2,9 +2,6 @@
   <div id="detail">
     <detail-nav-bar class="detail-nav" @titleClick="titleClick" ref="nav"></detail-nav-bar>
     <scroll class="content" ref="scroll" @scroll="contentScroll" :probe-type="3">
-      <ul>
-        <li v-for="item in $store.state.cartList">{{item}}</li>
-      </ul>
       <detail-swiper :top-images="topImages"></detail-swiper>
       <detail-base-info :goods="goods"></detail-base-info>
       <detail-shop-info :shop="shop"></detail-shop-info>
@@ -30,12 +27,13 @@
 
   import Scroll from "components/common/scroll/Scroll"
   import GoodsList from "components/content/goods/GoodsList"
-
+  import { mapActions } from "vuex"
 
   import { getDetail, Goods, Shop, GoodsParam, getRecommend } from "network/detail"
   import { debounce } from "common/utils"
-  import { itemListenerMixin,backTopMixin } from "common/mixin"
-  import {BACK_POSITION} from "common/const"
+  import { itemListenerMixin, backTopMixin } from "common/mixin"
+  import { BACK_POSITION } from "common/const"
+
 
   export default {
     name: 'Detail',
@@ -69,6 +67,7 @@
       }
     },
     methods: {
+      ...mapActions(["addCart"]),
       imageLoad() {
         this.$refs.scroll.refresh()
         this.getThemeTopY()
@@ -88,14 +87,19 @@
         }
         this.isShowBackTop = (-position.y) > BACK_POSITION
       },
-      addToCart(){
-        const product={}
-        product.image=this.topImages[0]
-        product.title=this.goods.title
-        product.desc=this.goods.desc
-        product.price=this.goods.realPrice
-        product.iid=this.iid
-        this.$store.dispatch("addCart",product)
+      addToCart() {
+        const product = {}
+        product.image = this.topImages[0]
+        product.title = this.goods.title
+        product.desc = this.goods.desc
+        product.price = this.goods.realPrice
+        product.iid = this.iid
+        this.addCart(product).then(res => {
+          console.log(this.$toast);
+          this.$toast.show(res)
+        })
+
+
       }
     },
     created() {
@@ -116,14 +120,13 @@
           this.themeTopYs.push(this.$refs.comment.$el.offsetTop - 44)
           this.themeTopYs.push(this.$refs.recommend.$el.offsetTop - 44)
           this.themeTopYs.push(Number.MAX_VALUE)
-
         }, 200)
       })
       getRecommend().then(res => {
         this.recommends = res.data.list
       })
     },
-    mixins: [itemListenerMixin,backTopMixin],
+    mixins: [itemListenerMixin, backTopMixin],
     destoryed() {
       this.$bus.$off("itemImgLoad", this.itemImgListener)
     }
